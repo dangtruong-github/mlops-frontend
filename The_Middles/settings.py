@@ -32,7 +32,7 @@ SECRET_KEY = 'django-insecure-+s_3n)33t=dr)dq@jzvog#y()iqkk1bbm$lwq14&&u%9#ogqm7
 DEBUG = True
 
 ALLOWED_HOSTS = [
-  'localhost',,
+  'localhost',
   'film-recommendation.onrender.com']
 
 
