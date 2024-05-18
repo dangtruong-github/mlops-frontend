@@ -35,6 +35,8 @@ ALLOWED_HOSTS = [
   'localhost',
   'film-recommendation.onrender.com']
 
+CSRF_TRUSTED_ORIGINS = ["https://film-recommendation.onrender.com/"]
+
 
 # Application definition
 
