@@ -12,7 +12,7 @@ class UserRegisterForm(UserCreationForm):
 
     def __init__(self, *args, **kwargs):
         super(UserRegisterForm, self).__init__(*args, **kwargs)
-        self.fields['username'].widget.attrs['placeholder'] = 'Nhập tên người dùng của bạn'
+        self.fields['username'].widget.attrs['placeholder'] = 'Tên đăng nhập'
         self.fields['email'].widget.attrs['placeholder'] = 'Nhập email của bạn'
         self.fields['password1'].widget.attrs['placeholder'] = 'Mật Khẩu'
         self.fields['password2'].widget.attrs['placeholder'] = 'Nhập lại mật khẩu'

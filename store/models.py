@@ -21,6 +21,51 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+class Movie(models.Model):
+    id = models.AutoField(primary_key=True)
+    budget = models.IntegerField()
+    homepage = models.URLField(max_length=200)
+    original_language = models.CharField(max_length=2)
+    original_title = models.CharField(max_length=200)
+    overview = models.TextField()
+    popularity = models.FloatField()
+    release_date = models.DateTimeField()
+    revenue = models.IntegerField()
+    runtime = models.FloatField()
+    status_film = models.CharField(max_length=200)
+    tagline = models.CharField(max_length=200)
+    title = models.CharField(max_length=200)
+    vote_average = models.FloatField()
+    vote_count = models.IntegerField()
+    images = models.ImageField(upload_to='photos/movies')
+    genres = models.ManyToManyField(Category)  # Many-to-many relationship with Category(genre)
+    
+    
+    # def get_url(self):
+    #     return reverse('product_detail', args=[self.homepage, self.homepage])
+    
+    def __str__(self):
+        return self.title
+
+class Actor(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200)
+    gender = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
+class CastCredit(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    actor = models.ManyToManyField(Actor)   # Many-to-many relationship with Actor
+    character_name = models.CharField(max_length=200)
+    gender = models.IntegerField()
+    order = models.IntegerField()
+
+    def __str__(self):
+        actors_names = ", ".join([actor.name for actor in self.actor.all()])
+        return f"{self.character_name} in {self.movie.title} played by {actors_names}"
+
 
 
 class VariationManager(models.Manager):

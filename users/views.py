@@ -8,10 +8,19 @@ def register(request):
     if request.method == 'POST':
         form = UserRegisterForm(request.POST)
         if form.is_valid():
-            form.save()
-            username = form.cleaned_data.get('username')
-            messages.success(request, f'Your account has been created! You are now able to log in')
-            return redirect('login')
+            try:
+                form.save()
+                username = form.cleaned_data.get('username')
+                messages.success(request, f'Your account has been created! You are now able to log in.')
+                return redirect('login')
+            except Exception as e:
+                messages.error(request, f'An error occurred during registration: {e}')
+        else:
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f'{field.title()}: {error}')
+                    break
+            messages.error(request, 'Registration failed. Please correct the errors below.')
     else:
         form = UserRegisterForm()
     return render(request, 'users/register.html', {'form': form})
