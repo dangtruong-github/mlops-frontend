@@ -2,7 +2,7 @@ from django.urls import reverse
 from category.models import Category
 from django.contrib.auth.models import User
 from django.db import models
-
+from django.utils.text import slugify
 
 class Product(models.Model):
     product_name = models.CharField(max_length=200, unique=True)
@@ -41,8 +41,8 @@ class Movie(models.Model):
     genres = models.ManyToManyField(Category)  # Many-to-many relationship with Category(genre)
     
     
-    # def get_url(self):
-    #     return reverse('product_detail', args=[self.homepage, self.homepage])
+    def get_url(self):
+        return reverse('movie_detail', args=[self.id, slugify(self.title)])
     
     def __str__(self):
         return self.title
@@ -55,17 +55,25 @@ class Actor(models.Model):
     def __str__(self):
         return self.name
 
+
 class CastCredit(models.Model):
-    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
-    actor = models.ManyToManyField(Actor)   # Many-to-many relationship with Actor
+    # id = models.AutoField(primary_key=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)   # Khi xóa movie thì CastCredit bị xóa
+    actor = models.ForeignKey(Actor, on_delete=models.CASCADE, default=1)   # Khi xóa actor thì CastCredit bị xóa
     character_name = models.CharField(max_length=200)
-    gender = models.IntegerField()
+    
+    GENDER_CHOICES = (
+        (0, 'Not specified'),
+        (1, 'Male'),
+        (2, 'Female'),
+        (3, 'Other'),
+    )
+    
+    gender = models.IntegerField(choices=GENDER_CHOICES, default=0)
     order = models.IntegerField()
 
     def __str__(self):
-        actors_names = ", ".join([actor.name for actor in self.actor.all()])
-        return f"{self.character_name} in {self.movie.title} played by {actors_names}"
-
+        return f"{self.character_name} in {self.movie.title} played by {self.actor.name}"
 
 
 class VariationManager(models.Manager):
