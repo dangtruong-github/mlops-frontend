@@ -21,6 +21,7 @@ def sendEmail(request, order):
 
 
 def payments(request):
+    print('hello')
     try:
         if  request.method == 'POST':
             data = request.POST
@@ -167,6 +168,7 @@ def order_complete(request):
             'payment': payment,
             'subtotal': subtotal,
         }
+        print('succes')
         return render(request, 'orders/order_complete.html', context)
     except Exception:
         return redirect('home')

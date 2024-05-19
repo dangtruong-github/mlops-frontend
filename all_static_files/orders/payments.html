@@ -104,6 +104,7 @@
 						<div id="paypal-button-container">
 
 						</div>
+						<button onclick="makePayment()">Thanh toán</button>
 						<a href="{% url 'store' %}" class="btn btn-light btn-block">Continue Shopping</a>
 					</div>
 					<!-- card-body.// -->
@@ -118,7 +119,7 @@
 	<!-- container .//  -->
 </section>
 <!-- ========================= SECTION CONTENT END// ========================= -->
-<script>
+<!-- <script>
 	function getCookie(name) {
 		let cookieValue = null;
 		if (document.cookie && document.cookie !== '') {
@@ -187,5 +188,50 @@
 			});
 		}
 	}).render('#paypal-button-container');
+</script> -->
+<script>
+	function getCookie(name) {
+		let cookieValue = null;
+		if (document.cookie && document.cookie !== '') {
+			const cookies = document.cookie.split(';');
+			for (let i = 0; i < cookies.length; i++) {
+				const cookie = cookies[i].trim();
+				if (cookie.substring(0, name.length + 1) === (name + '=')) {
+					cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+					break;
+				}
+			}
+		}
+		return cookieValue;
+	}
+    var url = "{% url 'payments' %}";
+    var csrfToken = getCookie('csrftoken');
+    var orderID = "{{ order.order_number }}";
+    var paymentMethod = 'PayPal';
+    var redirectUrl = "{% url 'order_complete' %}";
+
+    function makePayment() {
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: {
+                'csrfmiddlewaretoken': csrfToken,
+                'orderID': orderID,
+				'transID': '123',
+                'payment_method': paymentMethod,
+                'status': 'Completed', // Giả sử giao dịch được đánh dấu là đã hoàn thành ngay khi nhấn nút
+            },
+            success: function(response) {
+                data = response.data;
+                alert('Payment completed!');
+                window.location.href = redirectUrl + '?order_number=' + data["order_number"] + '&payment_id=' + data["transID"];;
+            },
+            error: function(response) {
+                alert('Payment failed.');
+            }
+        });
+    }
 </script>
+
+
 {% endblock %}
