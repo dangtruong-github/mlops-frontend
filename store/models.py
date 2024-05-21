@@ -1,3 +1,4 @@
+
 from django.urls import reverse
 from category.models import Category
 from django.contrib.auth.models import User
@@ -23,22 +24,24 @@ class Product(models.Model):
         return self.product_name
 class Movie(models.Model):
     id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=200)
     budget = models.IntegerField()
-    homepage = models.URLField(max_length=200)
-    original_language = models.CharField(max_length=2)
-    original_title = models.CharField(max_length=200)
     overview = models.TextField()
     popularity = models.FloatField()
-    release_date = models.DateTimeField()
-    revenue = models.IntegerField()
-    runtime = models.FloatField()
-    status_film = models.CharField(max_length=200)
-    tagline = models.CharField(max_length=200)
-    title = models.CharField(max_length=200)
+    price = models.FloatField(default=0)
     vote_average = models.FloatField()
     vote_count = models.IntegerField()
+    release_date = models.DateTimeField()
     images = models.ImageField(upload_to='photos/movies')
     genres = models.ManyToManyField(Category)  # Many-to-many relationship with Category(genre)
+
+    homepage = models.URLField(max_length=200, blank=True)
+    original_language = models.CharField(max_length=2, blank=True)
+    original_title = models.CharField(max_length=200, blank=True)
+    revenue = models.IntegerField(blank=True)
+    runtime = models.FloatField(blank=True)
+    status_film = models.CharField(max_length=200, blank=True)
+    tagline = models.CharField(max_length=200, blank=True)
     
     
     def get_url(self):
@@ -50,7 +53,15 @@ class Movie(models.Model):
 class Actor(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=200)
-    gender = models.IntegerField()
+    short_name = models.CharField(max_length=30, default="N/A1", blank=True)
+    GENDER_CHOICES = (
+        (0, 'Not specified'),
+        (1, 'Male'),
+        (2, 'Female'),
+        (3, 'Other'),
+    )
+    
+    gender = models.IntegerField(choices=GENDER_CHOICES, default=0)
 
     def __str__(self):
         return self.name
