@@ -1,8 +1,8 @@
 from django.shortcuts import render
-from store.models import Product
+from store.models import Product, Movie
 
 def home(request):
-    products = Product.objects.all().filter()
+    products = Movie.objects.all().filter()
     context = {
         'products': products,
     }

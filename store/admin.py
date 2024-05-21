@@ -7,11 +7,6 @@ class ProductAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('product_name',)}
 
 
-class VariationAdmin(admin.ModelAdmin):
-    list_display = ('product', 'variation_category', 'variation_value', 'is_active', 'created_date')
-    list_editable = ('is_active',)   # Cho phép chỉnh sửa trên list hiển thị
-    list_filter = ('product', 'variation_category', 'variation_value')
-
 class MovieAdmin(admin.ModelAdmin):
     list_display = ('title', 'budget', 'release_date', 'popularity', 'vote_average')
     list_filter = ('release_date',)
@@ -31,7 +26,6 @@ class CastCreditAdmin(admin.ModelAdmin):
     actor_name.short_description = 'Actor Name'
     
 admin.site.register(Product, ProductAdmin)
-admin.site.register(Variation, VariationAdmin)
 admin.site.register(ReviewRating)
 admin.site.register(Movie, MovieAdmin)
 admin.site.register(Actor)

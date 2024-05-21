@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from store.models import Product, Variation
+from store.models import Product,Movie
 
 
 class Cart(models.Model):
@@ -14,14 +14,14 @@ class Cart(models.Model):
 
 class CartItem(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    variations = models.ManyToManyField(Variation, blank=True)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, default=1)  # Ensure there is a Movie with ID 1
+    # variations = models.ManyToManyField(Variation, blank=True)
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, null=True)
     quantity = models.IntegerField()
     is_active = models.BooleanField(default=True)
 
     def sub_total(self):
-        return self.quantity * self.product.price
+        return self.quantity * self.movie.price
 
     def __unicode__(self):
-        return self.product
+        return self.movie

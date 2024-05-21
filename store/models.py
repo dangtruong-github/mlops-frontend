@@ -22,10 +22,12 @@ class Product(models.Model):
 
     def __str__(self):
         return self.product_name
+    
+    
 class Movie(models.Model):
     id = models.AutoField(primary_key=True)
     title = models.CharField(max_length=200)
-    budget = models.IntegerField()
+    budget = models.IntegerField(null=True, blank=True)
     overview = models.TextField()
     popularity = models.FloatField()
     price = models.FloatField(default=0)
@@ -33,19 +35,18 @@ class Movie(models.Model):
     vote_count = models.IntegerField()
     release_date = models.DateTimeField()
     images = models.ImageField(upload_to='photos/movies')
-    genres = models.ManyToManyField(Category)  # Many-to-many relationship with Category(genre)
+    genres = models.ManyToManyField(Category)  # Assuming Category model exists and is properly defined
 
     homepage = models.URLField(max_length=200, blank=True)
     original_language = models.CharField(max_length=2, blank=True)
     original_title = models.CharField(max_length=200, blank=True)
-    revenue = models.IntegerField(blank=True)
-    runtime = models.FloatField(blank=True)
+    revenue = models.IntegerField(null=True, blank=True)
+    runtime = models.FloatField(null=True, blank=True)
     status_film = models.CharField(max_length=200, blank=True)
     tagline = models.CharField(max_length=200, blank=True)
-    
-    
+
     def get_url(self):
-        return reverse('movie_detail', args=[self.id, slugify(self.title)])
+        return reverse('movie_detail', args=[str(self.id)])
     
     def __str__(self):
         return self.title
@@ -101,7 +102,7 @@ variation_category_choice = (
 )
 
 class Variation(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, default=1)
     variation_category = models.CharField(max_length=100, choices=variation_category_choice)
     variation_value = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
@@ -114,7 +115,7 @@ class Variation(models.Model):
 
 
 class ReviewRating(models.Model):
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE, default=1)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     subject = models.CharField(max_length=100, blank=True)
     review = models.TextField(max_length=500, blank=True)
@@ -126,3 +127,14 @@ class ReviewRating(models.Model):
 
     def __str__(self):
         return self.subject
+
+class ReviewMovieRating(models.Model):
+    movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=100, blank=True)
+    review = models.TextField(max_length=500, blank=True)
+    rating = models.FloatField()
+    ip = models.CharField(max_length=20, blank=True)
+    status = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
