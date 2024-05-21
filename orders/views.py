@@ -3,8 +3,8 @@ from django.http import JsonResponse
 from carts.models import CartItem
 from .forms import OrderForm
 import datetime
-from .models import Order, Payment, OrderProduct
-from store.models import Product
+from .models import Order, Payment, OrderMovie
+from store.models import Product, Movie
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
@@ -49,26 +49,26 @@ def payments(request):
             # Chuyển hết cart_item thành order_product
             cart_items = CartItem.objects.filter(user=request.user)
             for item in cart_items:
-                order_product = OrderProduct()
-                order_product.order_id = order.id
-                order_product.payment = payment
-                order_product.user_id = request.user.id
-                order_product.product_id = item.product_id
-                order_product.quantity = item.quantity
-                order_product.product_price = item.product.price
-                order_product.ordered = True
-                order_product.save()
+                order_movie = OrderMovie()
+                order_movie.order_id = order.id
+                order_movie.payment = payment
+                order_movie.user_id = request.user.id
+                order_movie.movie_id = item.movie_id
+                order_movie.quantity = item.quantity
+                order_movie.movie_price = item.movie.price
+                order_movie.ordered = True
+                order_movie.save()
 
                 cart_item = CartItem.objects.get(id=item.id)
-                product_variation = cart_item.variations.all()
-                order_product = OrderProduct.objects.get(id=order_product.id)
-                order_product.variations.set(product_variation)
-                order_product.save()
+                # movie_variation = cart_item.variations.all()
+                order_movie = OrderMovie.objects.get(id=order_movie.id)
+                # order_movie.variations.set(movie_variation)
+                order_movie.save()
 
-                # Reduce the quantity of the sold products
-                product = Product.objects.get(id=item.product_id)
-                product.stock -= item.quantity
-                product.save()
+                # Reduce the quantity of the sold movies
+                movie = Movie.objects.get(id=item.movie_id)
+                # movie.stock -= item.quantity
+                movie.save()
 
             # # Xóa hết cart_item
             CartItem.objects.filter(user=request.user).delete()
@@ -152,17 +152,17 @@ def order_complete(request):
 
     try:
         order = Order.objects.get(order_number=order_number, is_ordered=True)
-        ordered_products = OrderProduct.objects.filter(order_id=order.id)
+        ordered_movies = OrderMovie.objects.filter(order_id=order.id)
 
         subtotal = 0
-        for i in ordered_products:
-            subtotal += i.product_price * i.quantity
+        for i in ordered_movies:
+            subtotal += i.movie_price * i.quantity
 
         payment = Payment.objects.get(payment_id=transID)
 
         context = {
             'order': order,
-            'ordered_products': ordered_products,
+            'ordered_movies': ordered_movies,
             'order_number': order.order_number,
             'transID': payment.payment_id,
             'payment': payment,

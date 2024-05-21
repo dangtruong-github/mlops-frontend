@@ -1,4 +1,4 @@
-from orders.models import OrderProduct, OrderMovie
+from orders.models import OrderMovie
 from django.contrib import messages
 from store.forms import ReviewForm
 from django.shortcuts import get_object_or_404, redirect, render
@@ -18,9 +18,9 @@ from .chatModel import response_AI
 def store(request, category_slug=None):
     if category_slug is not None:
         categories = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.all().filter(category=categories, is_available=True)
+        products = Movie.objects.all().filter(category=categories)
     else:
-        products = Product.objects.all().filter(is_available=True).order_by('id')
+        products = Movie.objects.all().order_by('id')
 
     page = request.GET.get('page')
     page = page or 1
@@ -37,11 +37,11 @@ def store(request, category_slug=None):
 
 def product_detail(request, category_slug, product_slug=None):
     try:
-        single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
+        single_movie = Movie.objects.get(category__slug=category_slug, slug=product_slug)
         cart = Cart.objects.get(cart_id=_cart_id(request=request))
         in_cart = CartItem.objects.filter(
             cart=cart,
-            product=single_product
+            product=single_movie
         ).exists()
     except Exception as e:
         cart = Cart.objects.create(
@@ -49,16 +49,16 @@ def product_detail(request, category_slug, product_slug=None):
         )
 
     try:
-        orderproduct = OrderProduct.objects.filter(user=request.user, product_id=single_product.id).exists()
+        orderproduct = OrderMovie.objects.filter(user=request.user, movie_id=single_movie.id).exists()
     except Exception:
         orderproduct = None
 
-    reviews = ReviewRating.objects.filter(product_id=single_product.id, status=True)
+    reviews = ReviewRating.objects.filter(movie_id=single_movie.id)
 
     ratings = ["5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5"]
 
     context = {
-        'single_product': single_product,
+        'single_product': single_movie,
         'in_cart': in_cart if 'in_cart' in locals() else False,
         'orderproduct': orderproduct,
         'reviews': reviews,
@@ -85,7 +85,7 @@ def movie_detail(request, id):
     except Exception:
         ordermovie = None
 
-    reviews = ReviewMovieRating.objects.filter(movie_id=single_movie.id)
+    reviews = ReviewRating.objects.filter(movie_id=single_movie.id)
 
     ratings = ["5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5"]
 
