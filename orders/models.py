@@ -1,7 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
-from store.models import Product, Movie,Variation
+from store.models import Movie,Variation
 
 class Payment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)

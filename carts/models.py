@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.db import models
 
-from store.models import Product,Movie
+from store.models import Movie
 
 
 class Cart(models.Model):

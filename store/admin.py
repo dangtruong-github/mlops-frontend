@@ -1,10 +1,7 @@
 from django.contrib import admin
-from .models import Product, Variation, ReviewRating, Movie, Actor, CastCredit
+from .models import Variation, ReviewRating, Movie, Actor, CastCredit
 
 
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('product_name', 'price', 'stock', 'category', 'created_date', 'modified_date', 'is_available')
-    prepopulated_fields = {'slug': ('product_name',)}
 
 
 class MovieAdmin(admin.ModelAdmin):
@@ -25,7 +22,6 @@ class CastCreditAdmin(admin.ModelAdmin):
         return obj.actor.name
     actor_name.short_description = 'Actor Name'
     
-admin.site.register(Product, ProductAdmin)
 admin.site.register(ReviewRating)
 admin.site.register(Movie, MovieAdmin)
 admin.site.register(Actor)

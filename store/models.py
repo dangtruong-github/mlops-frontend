@@ -4,24 +4,6 @@ from category.models import Category
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.text import slugify
-
-class Product(models.Model):
-    product_name = models.CharField(max_length=200, unique=True)
-    slug = models.SlugField(max_length=200, unique=True)
-    description = models.TextField(max_length=500, blank=True)
-    price = models.IntegerField()
-    images = models.ImageField(upload_to='photos/products')
-    stock = models.IntegerField()
-    is_available = models.BooleanField(default=True)
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)    # Khi xóa category thì Product bị xóa
-    created_date = models.DateTimeField(auto_now_add=True)
-    modified_date = models.DateTimeField(auto_now=True)
-
-    def get_url(self):
-        return reverse('product_detail', args=[self.category.slug, self.slug])
-
-    def __str__(self):
-        return self.product_name
     
     
 class Movie(models.Model):
@@ -34,7 +16,7 @@ class Movie(models.Model):
     vote_average = models.FloatField()
     vote_count = models.IntegerField()
     release_date = models.DateTimeField()
-    images = models.ImageField(upload_to='photos/movies')
+    image_urls = models.URLField(max_length=200, blank=True)
     genres = models.ManyToManyField(Category)  # Assuming Category model exists and is properly defined
     slug = models.SlugField(max_length=200, unique=True, default="n/a")
 

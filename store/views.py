@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-from store.models import Product, ReviewRating, Movie, ReviewMovieRating
+from store.models import ReviewRating, Movie, ReviewMovieRating
 from carts.models import Cart, CartItem
 from category.models import Category
 from carts.views import _cart_id
@@ -18,53 +18,22 @@ from .chatModel import response_AI
 def store(request, category_slug=None):
     if category_slug is not None:
         categories = get_object_or_404(Category, slug=category_slug)
-        products = Movie.objects.all().filter(category=categories)
+        movies = Movie.objects.all().filter(genres=categories)
     else:
-        products = Movie.objects.all().order_by('id')
+        movies = Movie.objects.all().order_by('id')
 
     page = request.GET.get('page')
     page = page or 1
-    paginator = Paginator(products, 3)
-    paged_products = paginator.get_page(page)
-    product_count = products.count()
+    paginator = Paginator(movies, 3)
+    paged_movies = paginator.get_page(page)
+    movie_count = movies.count()
 
     context = {
-        'products': paged_products,
-        'product_count': product_count,
+        'movies': paged_movies,
+        'movie_count': movie_count,
     }
     return render(request, 'store/store.html', context=context)
 
-
-def product_detail(request, category_slug, product_slug=None):
-    try:
-        single_movie = Movie.objects.get(category__slug=category_slug, slug=product_slug)
-        cart = Cart.objects.get(cart_id=_cart_id(request=request))
-        in_cart = CartItem.objects.filter(
-            cart=cart,
-            product=single_movie
-        ).exists()
-    except Exception as e:
-        cart = Cart.objects.create(
-            cart_id=_cart_id(request)
-        )
-
-    try:
-        orderproduct = OrderMovie.objects.filter(user=request.user, movie_id=single_movie.id).exists()
-    except Exception:
-        orderproduct = None
-
-    reviews = ReviewRating.objects.filter(movie_id=single_movie.id)
-
-    ratings = ["5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5"]
-
-    context = {
-        'single_product': single_movie,
-        'in_cart': in_cart if 'in_cart' in locals() else False,
-        'orderproduct': orderproduct,
-        'reviews': reviews,
-        'ratings': ratings
-    }
-    return render(request, 'store/product_detail.html', context=context)
 
 def movie_detail(request, id):
     try:
@@ -90,23 +59,23 @@ def movie_detail(request, id):
     ratings = ["5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5"]
 
     context = {
-        'single_product': single_movie,
+        'single_movie': single_movie,
         'in_cart': in_cart if 'in_cart' in locals() else False,
-        'orderproduct': ordermovie,
+        'ordermovie': ordermovie,
         'reviews': reviews,
         'ratings': ratings
     }
-    return render(request, 'store/product_detail.html', context=context)
+    return render(request, 'store/movie_detail.html', context=context)
 
 def search(request):
     if 'q' in request.GET:
         q = request.GET.get('q')
-        products = Product.objects.order_by('-created_date').filter(Q(product_name__icontains=q) | Q(description__icontains=q))
-        product_count = products.count()
+        movies = Movie.objects.order_by('-release_date').filter(Q(title__icontains=q) | Q(overview__icontains=q))
+        movie_count = movies.count()
     context = {
-        'products': products,
+        'movies': movies,
         'q': q,
-        'product_count': product_count
+        'movie_count': movie_count
     }
     return render(request, 'store/store.html', context=context)
 
@@ -135,7 +104,7 @@ def submit_review(request, movie_id):
                 return redirect(url)
 
 @csrf_exempt
-def submit_message(request, product_id):
+def submit_message(request, movie_id):
     if request.method == "POST":
         try:
             # Lưu tin nhắn vào cơ sở dữ liệu hoặc thực hiện các thao tác cần thiết

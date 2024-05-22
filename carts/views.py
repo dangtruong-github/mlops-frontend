@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 
-from store.models import Product, Movie
+from store.models import Movie
 from carts.models import Cart, CartItem
 
 
@@ -14,16 +14,16 @@ def _cart_id(request):
 
 def add_cart(request, movie_id):
     current_user = request.user
-    movie = Movie.objects.get(id=movie_id)    # Get object product
+    movie = Movie.objects.get(id=movie_id)    # Get object movie
     if current_user.is_authenticated:
-        # product_variations = list()
+        # movie_variations = list()
         if request.method == 'POST':
             for item in request.POST:
                 key = item
                 value = request.POST.get(key)
                 # try:
-                #     variation = Variation.objects.get(product=product, variation_category__iexact=key, variation_value__iexact=value)
-                #     product_variations.append(variation)
+                #     variation = Variation.objects.get(movie=movie, variation_category__iexact=key, variation_value__iexact=value)
+                #     movie_variations.append(variation)
                 # except ObjectDoesNotExist:
                 #     pass
 
@@ -35,13 +35,13 @@ def add_cart(request, movie_id):
             )
             # existing_variation_list = [list(item.variations.all()) for item in cart_items]
             id = [item.id for item in cart_items]
-            # if product_variations in existing_variation_list:
-            #     idex = existing_variation_list.index(product_variations)
+            # if movie_variations in existing_variation_list:
+            #     idex = existing_variation_list.index(movie_variations)
             #     cart_item = CartItem.objects.get(id=id[idex])
             #     cart_item.quantity += 1
             # else:
             #     cart_item = CartItem.objects.create(
-            #         product=product,
+            #         movie=movie,
             #         user=current_user,
             #         quantity=1
             #     )
@@ -51,21 +51,21 @@ def add_cart(request, movie_id):
                 user=current_user,
                 quantity=1
             )
-        # if len(product_variations) > 0:
+        # if len(movie_variations) > 0:
         #     cart_item.variations.clear()
-        #     for item in product_variations:
+        #     for item in movie_variations:
         #         cart_item.variations.add(item)
         # cart_item.save()
         return redirect('cart')
     else:
-        # product_variations = list()
+        # movie_variations = list()
         # if request.method == 'POST':
         #     for item in request.POST:
         #         key = item
         #         value = request.POST.get(key)
         #         try:
         #             variation = Variation.objects.get(movie=movie, variation_category__iexact=key, variation_value__iexact=value)
-        #             product_variations.append(variation)
+        #             movie_variations.append(variation)
         #         except ObjectDoesNotExist:
         #             pass
         # try:
@@ -76,33 +76,33 @@ def add_cart(request, movie_id):
         #     )
         # cart.save()
 
-        # is_exists_cart_item = CartItem.objects.filter(product=product, cart=cart).exists()
+        # is_exists_cart_item = CartItem.objects.filter(movie=movie, cart=cart).exists()
         # if is_exists_cart_item:
         #     cart_items = CartItem.objects.filter(
-        #         product=product,
+        #         movie=movie,
         #         cart=cart
         #     )
         #     existing_variation_list = [list(item.variations.all()) for item in cart_items]
         #     id = [item.id for item in cart_items]
-        #     if product_variations in existing_variation_list:
-        #         idex = existing_variation_list.index(product_variations)
+        #     if movie_variations in existing_variation_list:
+        #         idex = existing_variation_list.index(movie_variations)
         #         cart_item = CartItem.objects.get(id=id[idex])
         #         cart_item.quantity += 1
         #     else:
         #         cart_item = CartItem.objects.create(
-        #             product=product,
+        #             movie=movie,
         #             cart=cart,
         #             quantity=1
         #         )
         # else:
         #     cart_item = CartItem.objects.create(
-        #         product=product,
+        #         movie=movie,
         #         cart=cart,
         #         quantity=1
         #     )
-        # if len(product_variations) > 0:
+        # if len(movie_variations) > 0:
         #     cart_item.variations.clear()
-        #     for item in product_variations:
+        #     for item in movie_variations:
         #         cart_item.variations.add(item)
         # cart_item.save()
         return redirect('cart')

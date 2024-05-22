@@ -4,7 +4,7 @@ from carts.models import CartItem
 from .forms import OrderForm
 import datetime
 from .models import Order, Payment, OrderMovie
-from store.models import Product, Movie
+from store.models import Movie
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 
