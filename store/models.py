@@ -36,6 +36,7 @@ class Movie(models.Model):
     release_date = models.DateTimeField()
     images = models.ImageField(upload_to='photos/movies')
     genres = models.ManyToManyField(Category)  # Assuming Category model exists and is properly defined
+    slug = models.SlugField(max_length=200, unique=True, default="n/a")
 
     homepage = models.URLField(max_length=200, blank=True)
     original_language = models.CharField(max_length=2, blank=True)
@@ -53,6 +54,7 @@ class Movie(models.Model):
 
 class Actor(models.Model):
     id = models.AutoField(primary_key=True)
+    slug = models.SlugField(max_length=200, unique=True, default="n/a")
     name = models.CharField(max_length=200)
     short_name = models.CharField(max_length=30, default="N/A1", blank=True)
     GENDER_CHOICES = (
@@ -103,6 +105,7 @@ variation_category_choice = (
 
 class Variation(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, default=1)
+    slug = models.SlugField(max_length=200, unique=True, default="n/a")
     variation_category = models.CharField(max_length=100, choices=variation_category_choice)
     variation_value = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
