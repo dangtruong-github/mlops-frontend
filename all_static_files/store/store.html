@@ -26,7 +26,7 @@
 						<div class="filter-content collapse show" id="collapse_1">
 							<div class="card-body">
 								<ul class="list-menu">
-									<li><a href="{% url 'store' %}">All products</a></li>
+									<li><a href="{% url 'store' %}">All movies</a></li>
 									{% for category in links %}
 									<li>
 										<a href="{{ category.get_url }}">{{ category.category_name }}</a>
@@ -122,42 +122,42 @@
 			<main class="col-md-9">
 				<header class="border-bottom mb-4 pb-3">
 					<div class="form-inline">
-						<span class="mr-md-auto">Found <b>{{ product_count }}</b> Items found
+						<span class="mr-md-auto">Found <b>{{ movie_count }}</b> Items found
 						</span>
 					</div>
 				</header>
 				<!-- sect-heading -->
 
 				<div class="row">
-					{% for product in products %}
+					{% for movie in movies %}
 					<div class="col-md-4">
-						<figure class="card card-product-grid">
+						<figure class="card card-movie-grid">
 							<div class="img-wrap">
-								<img src="{{ product.images.url }}" />
+								<img src="{{ movie.image_urls }}" />
 							</div>
 							<figcaption class="info-wrap">
 								<div class="fix-height">
-									<a href="{{ product.get_url }}" class="title">{{ product.product_name }}</a>
+									<a href="{{ movie.get_url }}" class="title">{{ movie.title }}</a>
 									<div class="price-wrap mt-2">
-										<span class="price">${{ product.price }}</span>
+										<span class="price">${{ movie.price }}</span>
 									</div>
 								</div>
-								<a href="{{ product.get_url }}" class="btn btn-block btn-warning">View detail</a>
+								<a href="{{ movie.get_url }}" class="btn btn-block btn-warning">View detail</a>
 							</figcaption>
 						</figure>
 					</div>
 					{% endfor %}
 				</div>
-				{% if products %}
+				{% if movies %}
 				<nav class="mt-4" aria-label="Page navigation sample">
 					<ul class="pagination">
-						{% if products.has_previous %}
+						{% if movies.has_previous %}
 						<li class="page-item">
 							<a class="page-link" href="{% url 'store' %}?page=1">First</a>
 						</li>
 						<li class="page-item">
 							<a class="page-link"
-								href="{% url 'store' %}?page={{products.previous_page_number}}">Previous</a>
+								href="{% url 'store' %}?page={{movies.previous_page_number}}">Previous</a>
 						</li>
 						{% else %}
 						<li class="page-item disabled">
@@ -167,14 +167,14 @@
 							<a class="page-link" href="#">Previous</a>
 						</li>
 						{% endif %}
-						{% if products.number|add:'-2' >= 1 %}
+						{% if movies.number|add:'-2' >= 1 %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'store' %}?page={{ products.number|add:'-2' }}">&hellip;</a>
+							<a class="page-link" href="{% url 'store' %}?page={{ movies.number|add:'-2' }}">&hellip;</a>
 						</li>
 						{% endif %}
-						{% for page in products.paginator.page_range %}
-						{% if products.number|add:'-1' <= page and page <= products.number|add:'1' %}
-						{% if page == products.number %}
+						{% for page in movies.paginator.page_range %}
+						{% if movies.number|add:'-1' <= page and page <= movies.number|add:'1' %}
+						{% if page == movies.number %}
 						<li class="page-item active">
 							<a class="page-link" href="{% url 'store' %}?page={{ page }}">{{ page }}</a>
 						</li>
@@ -185,18 +185,18 @@
 						{% endif %}
 						{% endif %}
 						{% endfor %}
-						{% if products.number|add:'2' <= products.paginator.num_pages %}
+						{% if movies.number|add:'2' <= movies.paginator.num_pages %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'store' %}?page={{ products.number|add:'2' }}">&hellip;</a>
+							<a class="page-link" href="{% url 'store' %}?page={{ movies.number|add:'2' }}">&hellip;</a>
 						</li>
 						{% endif %}
-						{% if products.has_next %}
+						{% if movies.has_next %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'store' %}?page={{products.next_page_number}}">Next</a>
+							<a class="page-link" href="{% url 'store' %}?page={{movies.next_page_number}}">Next</a>
 						</li>
 						<li class="page-item">
 							<a class="page-link"
-								href="{% url 'store' %}?page={{ products.paginator.num_pages }}">Last</a>
+								href="{% url 'store' %}?page={{ movies.paginator.num_pages }}">Last</a>
 						</li>
 						{% else %}
 						<li class="page-item disabled">

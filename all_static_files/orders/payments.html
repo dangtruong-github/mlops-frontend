@@ -40,7 +40,7 @@
                         <table class="table table-borderless table-shopping-cart">
                             <thead class="text-muted">
                                 <tr class="small text-uppercase">
-                                    <th scope="col">Product</th>
+                                    <th scope="col">Movie</th>
                                     <th scope="col" width="120">Quantity</th>
                                     <th scope="col" width="120">Price</th>
                                 </tr>
@@ -50,11 +50,11 @@
                                 <tr>
                                     <td>
                                         <figure class="itemside align-items-center">
-                                            <div class="aside"><img src="{{ cart_item.product.images.url }}"
+                                            <div class="aside"><img src="{{ cart_item.movie.image_urls }}"
                                                     class="img-sm"></div>
                                             <figcaption class="info">
-                                                <a href="{{ cart_item.product.get_url }}" class="title text-dark">
-                                                    {{ cart_item.product.product_name }}</a>
+                                                <a href="{{ cart_item.movie.get_url }}" class="title text-dark">
+                                                    {{ cart_item.movie.title }}</a>
                                                 <p class="text-muted small">
                                                     {% if cart_item.variations.all %}
                                                     {% for item in cart_item.variations.all %}
@@ -71,7 +71,7 @@
                                     <td>
                                         <div class="price-wrap">
                                             <var class="price">$ {{ cart_item.sub_total }}</var>
-                                            <small class="text-muted"> $ {{ cart_item.product.price }} each </small>
+                                            <small class="text-muted"> $ {{ cart_item.movie.price }} each </small>
                                         </div> <!-- price-wrap .// -->
                                     </td>
                                 </tr>
@@ -218,7 +218,7 @@
             data: {
                 'csrfmiddlewaretoken': csrfToken,
                 'orderID': orderID,
-				'transID': '123',
+				'transID': orderID,
                 'payment_method': paymentMethod,
                 'status': 'Completed', // Giả sử giao dịch được đánh dấu là đã hoàn thành ngay khi nhấn nút
             },

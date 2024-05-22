@@ -1,11 +1,11 @@
-from orders.models import OrderProduct
+from orders.models import OrderMovie
 from django.contrib import messages
 from store.forms import ReviewForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Q
 
-from store.models import Product, ReviewRating
+from store.models import ReviewRating, Movie, ReviewMovieRating
 from carts.models import Cart, CartItem
 from category.models import Category
 from carts.views import _cart_id
@@ -18,30 +18,31 @@ from .chatModel import response_AI
 def store(request, category_slug=None):
     if category_slug is not None:
         categories = get_object_or_404(Category, slug=category_slug)
-        products = Product.objects.all().filter(category=categories, is_available=True)
+        movies = Movie.objects.all().filter(genres=categories)
     else:
-        products = Product.objects.all().filter(is_available=True).order_by('id')
+        movies = Movie.objects.all().order_by('id')
 
     page = request.GET.get('page')
     page = page or 1
-    paginator = Paginator(products, 3)
-    paged_products = paginator.get_page(page)
-    product_count = products.count()
+    paginator = Paginator(movies, 3)
+    paged_movies = paginator.get_page(page)
+    movie_count = movies.count()
 
     context = {
-        'products': paged_products,
-        'product_count': product_count,
+        'movies': paged_movies,
+        'movie_count': movie_count,
     }
     return render(request, 'store/store.html', context=context)
 
 
-def product_detail(request, category_slug, product_slug=None):
+def movie_detail(request, id):
     try:
-        single_product = Product.objects.get(category__slug=category_slug, slug=product_slug)
+        single_movie = Movie.objects.get(id=id)
+        print(single_movie)
         cart = Cart.objects.get(cart_id=_cart_id(request=request))
         in_cart = CartItem.objects.filter(
             cart=cart,
-            product=single_product
+            movie=single_movie
         ).exists()
     except Exception as e:
         cart = Cart.objects.create(
@@ -49,42 +50,41 @@ def product_detail(request, category_slug, product_slug=None):
         )
 
     try:
-        orderproduct = OrderProduct.objects.filter(user=request.user, product_id=single_product.id).exists()
+        ordermovie = OrderMovie.objects.filter(user=request.user, movie_id=single_movie.id).exists()
     except Exception:
-        orderproduct = None
+        ordermovie = None
 
-    reviews = ReviewRating.objects.filter(product_id=single_product.id, status=True)
+    reviews = ReviewRating.objects.filter(movie_id=single_movie.id)
 
     ratings = ["5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5"]
 
     context = {
-        'single_product': single_product,
+        'single_movie': single_movie,
         'in_cart': in_cart if 'in_cart' in locals() else False,
-        'orderproduct': orderproduct,
+        'ordermovie': ordermovie,
         'reviews': reviews,
         'ratings': ratings
     }
-    return render(request, 'store/product_detail.html', context=context)
-
+    return render(request, 'store/movie_detail.html', context=context)
 
 def search(request):
     if 'q' in request.GET:
         q = request.GET.get('q')
-        products = Product.objects.order_by('-created_date').filter(Q(product_name__icontains=q) | Q(description__icontains=q))
-        product_count = products.count()
+        movies = Movie.objects.order_by('-release_date').filter(Q(title__icontains=q) | Q(overview__icontains=q))
+        movie_count = movies.count()
     context = {
-        'products': products,
+        'movies': movies,
         'q': q,
-        'product_count': product_count
+        'movie_count': movie_count
     }
     return render(request, 'store/store.html', context=context)
 
 
-def submit_review(request, product_id):
+def submit_review(request, movie_id):
     url = request.META.get('HTTP_REFERER')
     if request.method == "POST":
         try:
-            review = ReviewRating.objects.get(user__id=request.user.id, product__id=product_id)
+            review = ReviewRating.objects.get(user__id=request.user.id, movie__id=movie_id)
             form = ReviewForm(request.POST, instance=review)
             form.save()
             messages.success(request, "Thank you! Your review has been updated.")
@@ -97,14 +97,14 @@ def submit_review(request, product_id):
                 data.rating = form.cleaned_data['rating']
                 data.review = form.cleaned_data['review']
                 data.ip = request.META.get('REMOTE_ADDR')
-                data.product_id = product_id
+                data.movie_id = movie_id
                 data.user_id = request.user.id
                 data.save()
                 messages.success(request, "Thank you! Your review has been submitted.")
                 return redirect(url)
 
 @csrf_exempt
-def submit_message(request, product_id):
+def submit_message(request, movie_id):
     if request.method == "POST":
         try:
             # Lưu tin nhắn vào cơ sở dữ liệu hoặc thực hiện các thao tác cần thiết
