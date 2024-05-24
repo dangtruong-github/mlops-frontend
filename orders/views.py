@@ -7,6 +7,8 @@ from .models import Order, Payment, OrderMovie
 from store.models import Movie
 from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
+from django.utils import timezone
+from datetime import timedelta
 
 
 def sendEmail(request, order):
@@ -57,6 +59,7 @@ def payments(request):
                 order_movie.quantity = item.quantity
                 order_movie.movie_price = item.movie.price
                 order_movie.ordered = True
+                order_movie.expiry_date = timezone.now() + timedelta(days=30)
                 order_movie.save()
 
                 cart_item = CartItem.objects.get(id=item.id)

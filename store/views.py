@@ -14,6 +14,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 
 from .chatModel import response_AI
+from datetime import datetime
 
 def store(request, category_slug=None):
     if category_slug is not None:
@@ -78,6 +79,51 @@ def search(request):
         'movie_count': movie_count
     }
     return render(request, 'store/store.html', context=context)
+
+
+def sub_search(request):
+    genre_ids = request.GET.getlist('genre')
+    min_rating = request.GET.get('min_rating', 1)
+    max_rating = request.GET.get('max_rating', 5)
+    min_price = request.GET.get('min_price', 0)
+    max_price = request.GET.get('max_price', 2000)
+    release_date_min_str = request.GET.get('release_date_min', '')
+    release_date_max_str = request.GET.get('release_date_max', '')
+    actor_name = request.GET.get('actor', '')
+
+
+
+    release_date_min = datetime.strptime(release_date_min_str, '%Y-%m-%d') if release_date_min_str else None
+    release_date_max = datetime.strptime(release_date_max_str, '%Y-%m-%d') if release_date_max_str else None
+
+    # Start with all movies and then apply filters
+    movies = Movie.objects.all()
+
+    if genre_ids:
+        movies = movies.filter(genres__id__in=genre_ids)
+
+    if min_rating or max_rating:
+        movies = movies.filter(vote_average__gte=min_rating, vote_average__lte=max_rating)
+
+    if min_price or max_price:
+        movies = movies.filter(price__gte=min_price, price__lte=max_price)
+
+
+    if release_date_max:
+        # Để xử lý trường hợp người dùng không nhập ngày kết thúc, chúng ta sẽ xem xét các bộ phim có release_date không quá ngày tìm kiếm
+        release_date_max = release_date_max.replace(hour=23, minute=59, second=59)  # Đặt giờ, phút và giây cuối cùng của ngày
+        movies = movies.filter(release_date__lte=release_date_max)
+
+    if actor_name:
+        # Lấy danh sách các bộ phim mà diễn viên đó tham gia
+        movies = movies.filter(castcredit__actor__name__icontains=actor_name)
+    movie_count = movies.count()
+    context = {
+        'movies': movies,
+        'movie_count': movie_count
+    }
+    return render(request, 'store/store.html', context=context)
+
 
 
 def submit_review(request, movie_id):

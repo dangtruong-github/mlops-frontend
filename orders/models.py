@@ -43,6 +43,7 @@ class Order(models.Model):
     is_ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    expiry_date =  models.DateTimeField(auto_now=True)
 
     def full_name(self):
         return "{0} {1}".format(self.first_name, self.last_name)
@@ -65,6 +66,7 @@ class OrderMovie(models.Model):
     ordered = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    expiry_date =  models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.movie.title
