@@ -5,7 +5,11 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
 	<div class="container">
+		{% if slug %}
+		<h2 class="title-page">Search results...</h2>
+		{% else %}
 		<h2 class="title-page">Our movies database</h2>
+		{% endif %}
 	</div>
 	<!-- container //  -->
 </section>
@@ -25,14 +29,18 @@
 									<h6 class="title">Movie Genre</h6>
 								</a>
 							</header>
-							<div class="filter-content collapse show" id="collapse_1">
+							<div class="filter-content collapse hide" id="collapse_1">
 								<div class="card-body">
 									<ul class="list-menu">
 										<li><a href="{% url 'store' %}">All movies</a></li>
 										{% for category in links %}
 										<li>
 											<label>
+												{% if category.id in genre_ids %}
+												<input type="checkbox" name="genre" value="{{ category.id }}" checked>
+												{% else %}
 												<input type="checkbox" name="genre" value="{{ category.id }}">
+												{% endif %}
 												{{ category.category_name }}
 											</label>
 										</li>
@@ -55,7 +63,7 @@
 								<div class="card-body">
 									<!--  -->
 									<div class="input-group w-100">
-										<input type="text" class="form-control" style="width:60%;" placeholder="Search" name="q" value="{{ q }}">
+										<input type="text" class="form-control" style="width:60%;" placeholder="Search" name="actor" value="{{ actor }}">
 										<div class="input-group-append">
 											
 										</div>
@@ -70,21 +78,21 @@
 
 						<article class="filter-group">
 							<header class="card-header">
-								<a href="#" data-toggle="collapse" data-target="#collapse_2" aria-expanded="true">
+								<a href="#" data-toggle="collapse" data-target="#collapse_3" aria-expanded="true">
 									<i class="icon-control fa fa-chevron-down"></i>
 									<h6 class="title">Release Date</h6>
 								</a>
 							</header>
-							<div class="filter-content collapse show" id="collapse_2">
+							<div class="filter-content collapse show" id="collapse_3">
 								<div class="card-body">
 									<div class="form-row mt-3">
-										<div class="form-group col-md-6">
+										<div class="form-group col-md-12">
 											<label for="release_date_min">From</label>
-											<input type="date" class="form-control" id="release_date_min" name="release_date_min">
-										</div>
-										<div class="form-group col-md-6">
+											<input type="date" class="form-control" id="release_date_min" name="release_date_min" 
+											value="{{ release_date_min }}">
 											<label for="release_date_max">To</label>
-											<input type="date" class="form-control" id="release_date_max" name="release_date_max">
+											<input type="date" class="form-control" id="release_date_max" name="release_date_max"
+											value="{{ release_date_max }}">
 										</div>
 									</div>
 								</div>
@@ -104,21 +112,72 @@
 										<div class="form-group col-md-6">
 											<label>Min</label>
 											<select class="form-control" name="min_rating">
+												{% if min_rating is None or min_rating == 1 %}
+												<option value="1" selected>1</option>
+												{% else %}
 												<option value="1">1</option>
+												{% endif %}
+
+												
+												{% if min_rating == 2 %}
+												<option value="2" selected>2</option>
+												{% else %}
 												<option value="2">2</option>
+												{% endif %}
+
+												{% if min_rating == 3 %}
+												<option value="3" selected>3</option>
+												{% else %}
 												<option value="3">3</option>
+												{% endif %}
+
+												{% if min_rating == 4 %}
+												<option value="4" selected>4</option>
+												{% else %}
 												<option value="4">4</option>
+												{% endif %}
+
+												{% if min_rating == 5 %}
+												<option value="5" selected>3</option>
+												{% else %}
 												<option value="5">5</option>
+												{% endif %}
 											</select>
 										</div>
+										
 										<div class="form-group col-md-6">
 											<label>Max</label>
 											<select class="form-control" name="max_rating">
+												{% if max_rating == 1 %}
+												<option value="1" selected>1</option>
+												{% else %}
 												<option value="1">1</option>
+												{% endif %}
+
+												
+												{% if max_rating == 2 %}
+												<option value="2" selected>2</option>
+												{% else %}
 												<option value="2">2</option>
+												{% endif %}
+
+												{% if max_rating == 3 %}
+												<option value="3" selected>3</option>
+												{% else %}
 												<option value="3">3</option>
+												{% endif %}
+
+												{% if max_rating == 4 %}
+												<option value="4" selected>4</option>
+												{% else %}
 												<option value="4">4</option>
+												{% endif %}
+
+												{% if max_rating is None or max_rating == 5 %}
+												<option value="5" selected>5</option>
+												{% else %}
 												<option value="5">5</option>
+												{% endif %}
 											</select>
 										</div>
 									</div>
@@ -139,25 +198,93 @@
 										<div class="form-group col-md-6">
 											<label>Min</label>
 											<select class="form-control" name="min_price">
+												{% if min_price is None or min_price == 0 %}
+												<option value="0" selected>$0</option>
+												{% else %}
 												<option value="0">$0</option>
+												{% endif %}
+												
+												{% if min_price == 50 %}
+												<option value="50" selected>$50</option>
+												{% else %}
 												<option value="50">$50</option>
+												{% endif %}
+								
+												{% if min_price == 100 %}
+												<option value="100" selected>$100</option>
+												{% else %}
 												<option value="100">$100</option>
-												<option value="150">$150</option>
+												{% endif %}
+								
+												{% if min_price == 200 %}
+												<option value="200" selected>$200</option>
+												{% else %}
 												<option value="200">$200</option>
+												{% endif %}
+								
+												{% if min_price == 500 %}
+												<option value="500" selected>$500</option>
+												{% else %}
 												<option value="500">$500</option>
+												{% endif %}
+								
+												{% if min_price == 1000 %}
+												<option value="1000" selected>$1000</option>
+												{% else %}
 												<option value="1000">$1000</option>
+												{% endif %}
+								
+												{% if min_price == 2000 %}
+												<option value="2000" selected>$2000</option>
+												{% else %}
+												<option value="2000">$2000</option>
+												{% endif %}
 											</select>
 										</div>
 										<div class="form-group col-md-6">
 											<label>Max</label>
 											<select class="form-control" name="max_price">
+												{% if max_price == 0 %}
+												<option value="0" selected>$0</option>
+												{% else %}
+												<option value="0">$0</option>
+												{% endif %}
+												
+												{% if max_price == 50 %}
+												<option value="50" selected>$50</option>
+												{% else %}
 												<option value="50">$50</option>
+												{% endif %}
+								
+												{% if max_price == 100 %}
+												<option value="100" selected>$100</option>
+												{% else %}
 												<option value="100">$100</option>
-												<option value="150">$150</option>
+												{% endif %}
+								
+												{% if max_price == 200 %}
+												<option value="200" selected>$200</option>
+												{% else %}
 												<option value="200">$200</option>
+												{% endif %}
+								
+												{% if max_price == 500 %}
+												<option value="500" selected>$500</option>
+												{% else %}
 												<option value="500">$500</option>
+												{% endif %}
+								
+												{% if max_price == 1000 %}
+												<option value="1000" selected>$1000</option>
+												{% else %}
 												<option value="1000">$1000</option>
-												<option value="2000">$2000+</option>
+												{% endif %}
+								
+												{% if max_price is None or max_price == 100000 %}
+												<option value="100000" selected>$2000+</option>
+												{% else %}
+												<option value="100000">$2000+</option>
+												{% endif %}
 											</select>
 										</div>
 									</div>
@@ -166,6 +293,7 @@
 							</div>
 						</article>
 						<button class="btn btn-block btn-primary" type="submit">Apply</button>
+						<a href="/store" class="btn btn-block btn-secondary" type="submit">Reset</a>
 					</form>
 					
 					<!-- filter-group .// -->

@@ -32,6 +32,7 @@ def store(request, category_slug=None):
     context = {
         'movies': paged_movies,
         'movie_count': movie_count,
+        "slug": False
     }
     return render(request, 'store/store.html', context=context)
 
@@ -76,25 +77,26 @@ def search(request):
     context = {
         'movies': movies,
         'q': q,
-        'movie_count': movie_count
+        'movie_count': movie_count,
+        "slug": True
     }
     return render(request, 'store/store.html', context=context)
 
 
 def sub_search(request):
     genre_ids = request.GET.getlist('genre')
-    min_rating = request.GET.get('min_rating', 1)
-    max_rating = request.GET.get('max_rating', 5)
-    min_price = request.GET.get('min_price', 0)
-    max_price = request.GET.get('max_price', 2000)
-    release_date_min_str = request.GET.get('release_date_min', '')
-    release_date_max_str = request.GET.get('release_date_max', '')
+    min_rating = float(request.GET.get('min_rating', 1))
+    max_rating = float(request.GET.get('max_rating', 5))
+    min_price = float(request.GET.get('min_price', 0))
+    max_price = float(request.GET.get('max_price', 100000))
+    release_date_min_str = request.GET.get('release_date_min', "")
+    release_date_max_str = request.GET.get('release_date_max', "")
     actor_name = request.GET.get('actor', '')
 
-
+    genre_ids = [int(genre_id) for genre_id in genre_ids]
 
     release_date_min = datetime.strptime(release_date_min_str, '%Y-%m-%d') if release_date_min_str else None
-    release_date_max = datetime.strptime(release_date_max_str, '%Y-%m-%d') if release_date_max_str else None
+    release_date_max = datetime.strptime(release_date_max_str, '%Y-%m-%d') if release_date_max_str else datetime.now()
 
     # Start with all movies and then apply filters
     movies = Movie.objects.all()
@@ -109,10 +111,11 @@ def sub_search(request):
         movies = movies.filter(price__gte=min_price, price__lte=max_price)
 
 
-    if release_date_max:
-        # Để xử lý trường hợp người dùng không nhập ngày kết thúc, chúng ta sẽ xem xét các bộ phim có release_date không quá ngày tìm kiếm
-        release_date_max = release_date_max.replace(hour=23, minute=59, second=59)  # Đặt giờ, phút và giây cuối cùng của ngày
+    if release_date_min:
+        movies = movies.filter(release_date__gte=release_date_min, release_date__lte=release_date_max)
+    else:
         movies = movies.filter(release_date__lte=release_date_max)
+
 
     if actor_name:
         # Lấy danh sách các bộ phim mà diễn viên đó tham gia
@@ -120,8 +123,20 @@ def sub_search(request):
     movie_count = movies.count()
     context = {
         'movies': movies,
-        'movie_count': movie_count
+        'movie_count': movie_count,
+        "actor": actor_name,
+        "genre_ids": genre_ids,
+        "min_rating": min_rating,
+        "max_rating": max_rating,
+        "min_price": min_price,
+        "max_price": max_price,
+        "release_date_min": release_date_min_str,
+        "release_date_max": release_date_max_str,
+        "slug": True
     }
+
+    print(context)
+
     return render(request, 'store/store.html', context=context)
 
 
