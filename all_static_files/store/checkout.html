@@ -71,7 +71,6 @@
                             <thead class="text-muted">
                                 <tr class="small text-uppercase">
                                     <th scope="col">Movie</th>
-                                    <th scope="col" width="120">Quantity</th>
                                     <th scope="col" width="120">Price</th>
                                 </tr>
                             </thead>
@@ -96,12 +95,8 @@
                                         </figure>
                                     </td>
                                     <td>
-                                        <label for="">{{cart_item.quantity}}</label>
-                                    </td>
-                                    <td>
                                         <div class="price-wrap">
-                                            <var class="price">$ {{ cart_item.sub_total }}</var>
-                                            <small class="text-muted"> $ {{ cart_item.movie.price }} each </small>
+                                            <var class="price">$ {{ cart_item.movie.price }}</var>
                                         </div> <!-- price-wrap .// -->
                                     </td>
                                 </tr>

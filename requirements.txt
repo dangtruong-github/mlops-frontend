@@ -11,3 +11,4 @@ openai
 Pillow
 python-dotenv
 psycopg2-binary
+pytz

@@ -58,24 +58,23 @@
                                     <table class="table table-bordered">
                                         <thead>
                                             <tr>
-                                                <th class="per70 text-center">Movies</th>
-                                                <th class="per5 text-center">Qty</th>
+                                                <th colspan="2" class="per70 text-center">Movies</th>
                                                 <th class="per25 text-center">Total</th>
                                             </tr>
                                         </thead>
                                         <tbody>
                                             {% for item in ordered_movies %}
                                             <tr>
-                                                <td>{{ item.movie.title }}
-                                                    <p class="text-muted small">
-                                                        {% if item.variations.all %}
-                                                        {% for i in item.variations.all %}
-                                                        {{ i.variation_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
-                                                        {% endfor %}
-                                                        {% endif %}
-                                                    </p>
-                                                </td>
-                                                <td class="text-center">{{ item.quantity }}</td>
+                                                <th colspan="2" class="text-center">
+                                                    {{ item.movie.title }}
+                                                        <p class="text-muted small">
+                                                            {% if item.variations.all %}
+                                                            {% for i in item.variations.all %}
+                                                            {{ i.variation_category | capfirst }} : {{ i.variation_value | capfirst }} <br>
+                                                            {% endfor %}
+                                                            {% endif %}
+                                                        </p>
+                                                </th>
                                                 <td class="text-center">${{ item.movie_price }} USD</td>
                                             </tr>
                                             {% endfor %}

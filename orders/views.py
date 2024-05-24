@@ -25,7 +25,7 @@ def sendEmail(request, order):
 def payments(request):
     print('hello')
     try:
-        if  request.method == 'POST':
+        if request.method == 'POST':
             data = request.POST
             order_id = data['orderID']
             trans_id = data['transID']
@@ -59,19 +59,9 @@ def payments(request):
                 order_movie.quantity = item.quantity
                 order_movie.movie_price = item.movie.price
                 order_movie.ordered = True
-                order_movie.expiry_date = timezone.now() + timedelta(days=30)
+                order_movie.expiry_date = timezone.now() + timezone.timedelta(days=30)
+                print(order_movie.expiry_date)
                 order_movie.save()
-
-                cart_item = CartItem.objects.get(id=item.id)
-                # movie_variation = cart_item.variations.all()
-                order_movie = OrderMovie.objects.get(id=order_movie.id)
-                # order_movie.variations.set(movie_variation)
-                order_movie.save()
-
-                # Reduce the quantity of the sold movies
-                movie = Movie.objects.get(id=item.movie_id)
-                # movie.stock -= item.quantity
-                movie.save()
 
             # # Xóa hết cart_item
             CartItem.objects.filter(user=request.user).delete()

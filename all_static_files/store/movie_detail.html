@@ -22,31 +22,51 @@
                         {% csrf_token %}
                         <article class="content-body">
                             <h2 class="title">{{ single_movie.title }}</h2>
+                            {% if not ordermovie %}
                             <div class="mb-3">
                                 <var class="price h4">${{ single_movie.price }}</var>
                             </div>
+                            {% endif %}
                             <p>{{ single_movie.description }}</p>
                             <hr />
-
+                            <h4 class="title">Actors:</h4>
+                            {% for actor in actors_for_movie %}
+                            <p>{{ actor.name }}</p>
+                            {% endfor %}
                             <!-- row.// -->
                             <hr />
-                            {% if 1 > 0 %} {% if in_cart %}
-                            <button type="submit" class="btn btn-success">
-                                <span class="text">Add to cart</span>
-                                <i class="fas fa-check"></i>
-                            </button>
-                            <a href="{% url 'cart' %}" class="btn btn-outline-primary">
-                                <span class="text">Show cart</span>
-                                <i class="fas fa-eye"></i>
-                            </a>
+                            {% if login_true %}
+                                {% if ordermovie %}
+                                    <a href="#" class="btn btn-outline-primary">
+                                        <span class="text">Watch</span>
+                                        <i class="fas fa-play"></i>
+                                    </a>
+                                    {% if 1 > 2 %}
+                                    <button href="#" class="btn btn-warning">
+                                        <span class="text">Extend for ${{ single_movie.price }}</span>
+                                    </button>
+                                    {% endif %}
+                                    <br />
+                                    <br />
+                                    <span class="text">This feature is not available</span>
+                                {% else %}
+                                    {% if in_cart %}
+                                        <a href="{% url 'cart' %}" class="btn btn-outline-primary">
+                                            <span class="text">Show cart</span>
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    {% else %}
+                                        <button type="submit" class="btn btn-warning">
+                                            <span class="text">Add to cart</span>
+                                            <i class="fas fa-shopping-cart"></i>
+                                        </button>
+                                    {% endif %}
+                                {% endif %}
                             {% else %}
-                            <button type="submit" class="btn btn-warning">
-                                <span class="text">Add to cart</span>
-                                <i class="fas fa-shopping-cart"></i>
-                            </button>
-                            {% endif %} {% else %}
-                            <h5 class="text-danger">Out of Stock</h5>
-                            {% endif %}
+                                <a href="/login" class="btn btn-warning">
+                                    <span class="text">Login to watch</span>
+                                </a>
+                            {% endif%}
                         </article>
                         <!-- movie-info-aside .// -->
                     </form>

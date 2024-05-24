@@ -4,8 +4,9 @@ from store.forms import ReviewForm
 from django.shortcuts import get_object_or_404, redirect, render
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.db.models import Max
 
-from store.models import ReviewRating, Movie, ReviewMovieRating
+from store.models import ReviewRating, Movie, ReviewMovieRating, Actor, CastCredit
 from carts.models import Cart, CartItem
 from category.models import Category
 from carts.views import _cart_id
@@ -15,6 +16,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 from .chatModel import response_AI
 from datetime import datetime
+import pytz
+
+utc=pytz.UTC
 
 def store(request, category_slug=None):
     if category_slug is not None:
@@ -38,9 +42,11 @@ def store(request, category_slug=None):
 
 
 def movie_detail(request, id):
+    login_true = request.user.is_authenticated
+
     try:
         single_movie = Movie.objects.get(id=id)
-        print(single_movie)
+        #print(single_movie)
         cart = Cart.objects.get(cart_id=_cart_id(request=request))
         in_cart = CartItem.objects.filter(
             cart=cart,
@@ -52,21 +58,53 @@ def movie_detail(request, id):
         )
 
     try:
-        ordermovie = OrderMovie.objects.filter(user=request.user, movie_id=single_movie.id).exists()
-    except Exception:
+        ordermovie = OrderMovie.objects.filter(user=request.user, movie_id=single_movie.id)
+
+        ordermovie_true = ordermovie.exists()
+
+        for item in ordermovie:
+            print(item.expiry_date)
+
+        ordermovie = ordermovie.aggregate(Max('expiry_date'))['expiry_date__max']
+
+        ordermovie = ordermovie.replace(tzinfo=utc)
+        datetime_now = datetime.now().replace(tzinfo=utc)
+        print(ordermovie >= datetime_now)
+        print(ordermovie)
+        print(datetime_now)
+    except Exception as e:
+        print(e)
         ordermovie = None
+        ordermovie_true = False
+
+    try:
+        list_of_movies = [single_movie]
+        cast_credits_for_movie = CastCredit.objects.filter(movie__in=list_of_movies)
+
+        # Retrieve Actors based on the CastCredits
+        actors_for_movie = Actor.objects.filter(castcredit__in=cast_credits_for_movie).distinct()
+
+    except Exception as e:
+        print(e)
+        actors_for_movie = None
+        
 
     reviews = ReviewRating.objects.filter(movie_id=single_movie.id)
 
     ratings = ["5", "4.5", "4", "3.5", "3", "2.5", "2", "1.5", "1", "0.5"]
 
     context = {
+        'login_true': login_true,
         'single_movie': single_movie,
         'in_cart': in_cart if 'in_cart' in locals() else False,
-        'ordermovie': ordermovie,
+        'ordermovie': ordermovie_true,
         'reviews': reviews,
-        'ratings': ratings
+        'ratings': ratings,
+        "actors_for_movie": actors_for_movie
     }
+
+    print(context)
+
     return render(request, 'store/movie_detail.html', context=context)
 
 def search(request):
@@ -135,7 +173,7 @@ def sub_search(request):
         "slug": True
     }
 
-    print(context)
+    #print(context)
 
     return render(request, 'store/store.html', context=context)
 
