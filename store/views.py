@@ -25,7 +25,7 @@ def store(request, category_slug=None):
         categories = get_object_or_404(Category, slug=category_slug)
         movies = Movie.objects.all().filter(genres=categories)
     else:
-        movies = Movie.objects.all().order_by('id')
+        movies = Movie.objects.all().order_by('?')
 
     page = request.GET.get('page')
     page = page or 1
