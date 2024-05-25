@@ -27,9 +27,11 @@
                                 <var class="price h4">${{ single_movie.price }}</var>
                             </div>
                             {% endif %}
-                            <p>{{ single_movie.description }}</p>
+                            <p>{{ single_movie.overview }}</p>
                             <hr />
+                            {% if actors_for_movie %}
                             <h4 class="title">Actors:</h4>
+                            {% endif %}
                             {% for actor in actors_for_movie %}
                             <p>{{ actor.name }}</p>
                             {% endfor %}
