@@ -26,7 +26,7 @@ load_dotenv()
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in movieion secret!
-SECRET_KEY = 'django-insecure-+s_3n)33t=dr)dq@jzvog#y()iqkk1bbm$lwq14&&u%9#ogqm7'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in movieion!
 DEBUG = True
@@ -36,8 +36,7 @@ ALLOWED_HOSTS = [
   'film-recommendation.onrender.com',
   "127.0.0.1"]
 
-CSRF_TRUSTED_ORIGINS = ["https://film-recommendation.onrender.com",
-  "http://127.0.0.1"]
+CSRF_TRUSTED_ORIGINS = ["http://127.0.0.1", "https://film-recommendation.onrender.com"]
 
 
 # Application definition

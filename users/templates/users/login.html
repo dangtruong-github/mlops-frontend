@@ -35,28 +35,24 @@
 <body>
     <div class="sign_in">
         <div class="welcome">
-            <a href="/">
-                <img src="{%static 'images/logo.png'%}" alt="logo">
-            </a>
             <div class="slogan">
-                <h3 class="first">Đi khắp bốn phương</h3>
-                <h3 class="second">Không đâu bằng nhà</h3>
+                <h3 class="first">REAL VARID FILM</h3>
             </div>
         </div>
 
         <div class="content">
             <h1 class="title">
-                Đăng nhập
+                Login
             </h1>
             <form method="POST">
                 {% csrf_token %}
                 {{form}}
-                <button class="submit" type="submit"> Đăng Nhập </button>
+                <button class="submit" type="submit"> Login </button>
             </form>
 
             <div class="not_account">
                 <p>
-                    Bạn chưa có tài khoản ? <a href="/register">Đăng ký</a>
+                    Don't have an account ? <a href="/register">Sign up</a>
                 </p>
             </div>
         </div>

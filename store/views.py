@@ -62,16 +62,16 @@ def movie_detail(request, id):
 
         ordermovie_true = ordermovie.exists()
 
-        for item in ordermovie:
-            print(item.expiry_date)
+        #for item in ordermovie:
+            #print(item.expiry_date)
 
         ordermovie = ordermovie.aggregate(Max('expiry_date'))['expiry_date__max']
 
         ordermovie = ordermovie.replace(tzinfo=utc)
         datetime_now = datetime.now().replace(tzinfo=utc)
-        print(ordermovie >= datetime_now)
-        print(ordermovie)
-        print(datetime_now)
+        #print(ordermovie >= datetime_now)
+        #print(ordermovie)
+        #print(datetime_now)
     except Exception as e:
         print(e)
         ordermovie = None
@@ -103,7 +103,7 @@ def movie_detail(request, id):
         "actors_for_movie": actors_for_movie
     }
 
-    print(context)
+    #print(context)
 
     return render(request, 'store/movie_detail.html', context=context)
 
