@@ -1,15 +1,13 @@
-## Cách chạy
-**caif thu vien  .**
-- pip install - r requirement.txt
+# Overview:
+A movie renting website, with collaborative filtering recommendation module
+https://film-recommendation.onrender.com/
 
-**tao tai khoan admin .**
-''' python manage.py createsuperuser '''
+# Members
+1. Chu Hữu Đăng Trường - 22022505
+2. Nguyễn Đức Anh - 22022504
+3. Nguyễn Kim Hoàng Anh - 22022566
 
-**khoi dong django**
-
-''' python manage.py runserver '''
-
-- Mở cmd tại folder chứa file `manage.py`.
-- Copy `python manage.py runserver` vào cmd và Enter.
-  Kết quả sẽ kiểu như này:
-```
+# Function:
+- Rent film
+- Rate film after renting
+- Watch film (not available right now)
